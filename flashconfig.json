@@ -1,0 +1,343 @@
+{
+  "version": "1.0.5",
+  "manager": {
+    "apk_url": "https://gitee.com/lshwjgpt/SukiSUInstallerRes/releases/download/v4.1.0/SukiSU_v4.1.0_40201-release.apk",
+    "version": "4.1.0",
+    "package_name": "com.sukisu.ultra"
+  },
+  "device_compatibility": {
+    "min_api_level": 31,
+    "api_to_android": {
+      "32": "android12",
+      "33": "android13",
+      "34": "android14",
+      "35": "android15",
+      "36": "android16"
+    },
+    "supported_kernels": [
+      {
+        "kernel_version": "5.10",
+        "android_versions": ["android12", "android13"]
+      },
+      {
+        "kernel_version": "5.15",
+        "android_versions": ["android13", "android14"]
+      },
+      {
+        "kernel_version": "6.1",
+        "android_versions": ["android14", "android15"]
+      },
+      {
+        "kernel_version": "6.6",
+        "android_versions": ["android15", "android16"]
+      }
+    ]
+  },
+  "rooting_steps": [
+    {
+      "id": 1,
+      "name": "检测设备信息",
+      "progress": 5,
+      "message": "正在读取设备内核版本和API级别...",
+      "commands": [
+        {
+          "type": "adb_shell",
+          "command": "uname -r",
+          "description": "获取内核版本"
+        },
+        {
+          "type": "adb_shell",
+          "command": "getprop ro.board.first_api_level",
+          "description": "获取API级别"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "创建工作目录",
+      "progress": 10,
+      "message": "正在创建工作目录...",
+      "commands": [
+        {
+          "type": "adb_shell",
+          "command": "rm -rf /data/local/tmp/SukiSUInstaller",
+          "description": "清理旧的工作目录",
+          "ignore_error": true
+        },
+        {
+          "type": "adb_shell",
+          "command": "mkdir -p /data/local/tmp/SukiSUInstaller",
+          "description": "创建工作目录"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "下载刷机包",
+      "progress": 15,
+      "message": "正在下载刷机包...",
+      "commands": []
+    },
+    {
+      "id": 4,
+      "name": "提取Boot镜像",
+      "progress": 25,
+      "message": "正在使用payload_dumper提取镜像...",
+      "commands": []
+    },
+    {
+      "id": 5,
+      "name": "下载管理器APK",
+      "progress": 35,
+      "message": "正在下载SukiSU管理器APK...",
+      "commands": []
+    },
+    {
+      "id": 6,
+      "name": "推送Boot镜像",
+      "progress": 40,
+      "message": "正在将Boot镜像传输到设备...",
+      "commands": [
+        {
+          "type": "adb_push",
+          "source": "{boot_image_path}",
+          "target": "{boot_image_device_path}",
+          "description": "推送Boot镜像到设备"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "卸载冲突应用",
+      "progress": 45,
+      "message": "正在卸载冲突的root管理器...",
+      "commands": [
+        {
+          "type": "adb_shell",
+          "command": "pm uninstall com.rifsxd.ksunext",
+          "description": "卸载KSU Next",
+          "ignore_error": true
+        },
+        {
+          "type": "adb_shell",
+          "command": "pm uninstall me.weishu.kernelsu",
+          "description": "卸载KernelSU官方",
+          "ignore_error": true
+        },
+        {
+          "type": "adb_shell",
+          "command": "pm uninstall com.sukisu.ultra",
+          "description": "卸载SukiSU Ultra",
+          "ignore_error": true
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "推送并解压APK",
+      "progress": 50,
+      "message": "正在推送mgr.apk到设备...",
+      "commands": [
+        {
+          "type": "adb_push",
+          "source": "{manager_apk_path}",
+          "target": "/data/local/tmp/SukiSUInstaller/mgr.apk",
+          "description": "推送管理器APK"
+        },
+        {
+          "type": "adb_shell",
+          "command": "unzip -o /data/local/tmp/SukiSUInstaller/mgr.apk -d /data/local/tmp/SukiSUInstaller/mgr",
+          "description": "解压APK到工作目录"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "复制文件用于修补",
+      "progress": 55,
+      "message": "正在复制文件用于修补...",
+      "commands": [
+        {
+          "type": "adb_shell",
+          "command": "mv /data/local/tmp/SukiSUInstaller/mgr/lib/arm64-v8a/libandroidx.graphics.path.so /data/local/tmp/SukiSUInstaller/mgr/androidx.graphics.path",
+          "description": "复制androidx.graphics.path",
+          "ignore_error": true
+        },
+        {
+          "type": "adb_shell",
+          "command": "mv /data/local/tmp/SukiSUInstaller/mgr/lib/arm64-v8a/libkernelsu.so /data/local/tmp/SukiSUInstaller/mgr/kernelsu",
+          "description": "复制kernelsu",
+          "ignore_error": true
+        },
+        {
+          "type": "adb_shell",
+          "command": "mv /data/local/tmp/SukiSUInstaller/mgr/lib/arm64-v8a/libksud.so /data/local/tmp/SukiSUInstaller/mgr/ksud",
+          "description": "复制ksud"
+        },
+        {
+          "type": "adb_shell",
+          "command": "mv /data/local/tmp/SukiSUInstaller/mgr/lib/arm64-v8a/libmagiskboot.so /data/local/tmp/SukiSUInstaller/mgr/magiskboot",
+          "description": "复制magiskboot"
+        },
+        {
+          "type": "adb_shell",
+          "command": "mv /data/local/tmp/SukiSUInstaller/mgr/lib/arm64-v8a/libmmrl-file-manager.so /data/local/tmp/SukiSUInstaller/mgr/mmrl-file-manager",
+          "description": "复制mmrl-file-manager",
+          "ignore_error": true
+        },
+        {
+          "type": "adb_shell",
+          "command": "mv /data/local/tmp/SukiSUInstaller/mgr/lib/arm64-v8a/libmmrl-kernelsu.so /data/local/tmp/SukiSUInstaller/mgr/mmrl-kernelsu",
+          "description": "复制mmrl-kernelsu",
+          "ignore_error": true
+        },
+        {
+          "type": "adb_shell",
+          "command": "mv /data/local/tmp/SukiSUInstaller/mgr/lib/arm64-v8a/libsusfsd.so /data/local/tmp/SukiSUInstaller/mgr/susfsd",
+          "description": "复制susfsd",
+          "ignore_error": true
+        },
+        {
+          "type": "adb_shell",
+          "command": "mv /data/local/tmp/SukiSUInstaller/mgr/lib/arm64-v8a/libuid_scanner.so /data/local/tmp/SukiSUInstaller/mgr/uid_scanner",
+          "description": "复制uid_scanner",
+          "ignore_error": true
+        },
+        {
+          "type": "adb_shell",
+          "command": "mv /data/local/tmp/SukiSUInstaller/mgr/lib/arm64-v8a/libzakosign.so /data/local/tmp/SukiSUInstaller/mgr/zakosign",
+          "description": "复制zakosign",
+          "ignore_error": true
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "name": "设置工具权限",
+      "progress": 60,
+      "message": "正在设置工具链执行权限...",
+      "commands": [
+        {
+          "type": "adb_shell",
+          "command": "chmod 755 -R /data/local/tmp/SukiSUInstaller/mgr/",
+          "description": "设置755权限"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "name": "修补Boot镜像",
+      "progress": 75,
+      "message": "正在使用ksud修补Boot镜像（可能需要1-2分钟）...",
+      "commands": [
+        {
+          "type": "adb_shell",
+          "command": "cd /data/local/tmp/SukiSUInstaller/mgr && ./ksud boot-patch -b {boot_image_device_path} -o /data/local/tmp/SukiSUInstaller/mgr/ --magiskboot /data/local/tmp/SukiSUInstaller/mgr/magiskboot",
+          "description": "首次修补（不带KMI参数）",
+          "ignore_error": true
+        },
+        {
+          "type": "adb_shell",
+          "command": "cd /data/local/tmp/SukiSUInstaller/mgr && ./ksud boot-patch -b {boot_image_device_path} -o /data/local/tmp/SukiSUInstaller/mgr/ --magiskboot /data/local/tmp/SukiSUInstaller/mgr/magiskboot --kmi {kmi_version}",
+          "description": "使用KMI参数重试修补",
+          "condition": "if_first_failed"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "name": "拉取修补后的镜像",
+      "progress": 85,
+      "message": "正在从设备拉取修补后的镜像...",
+      "commands": [
+        {
+          "type": "adb_shell",
+          "command": "find /data/local/tmp/SukiSUInstaller/mgr/ -maxdepth 1 -type f -name 'kernelsu_patched_*.img'",
+          "description": "查找修补后的镜像文件"
+        },
+        {
+          "type": "adb_pull",
+          "source": "{patched_image_path}",
+          "target": "{local_output_path}",
+          "description": "拉取修补后的镜像"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "name": "刷入Boot分区",
+      "progress": 95,
+      "message": "正在刷入修补后的Boot镜像...",
+      "commands": [
+        {
+          "type": "adb_shell",
+          "command": "reboot bootloader",
+          "description": "重启到Fastboot模式"
+        },
+        {
+          "type": "wait",
+          "duration": 5000,
+          "description": "等待设备进入Fastboot模式"
+        },
+        {
+          "type": "fastboot_flash",
+          "partition": "{boot_partition}",
+          "image": "{patched_boot_local}",
+          "description": "刷入对应的Boot分区",
+          "ignore_error": true
+        },
+        {
+          "type": "fastboot_flash",
+          "partition": "init_boot",
+          "image": "{patched_boot_local}",
+          "description": "回退：尝试刷入init_boot分区",
+          "condition": "if_first_failed",
+          "ignore_error": true
+        },
+        {
+          "type": "fastboot_flash",
+          "partition": "boot",
+          "image": "{patched_boot_local}",
+          "description": "回退：尝试刷入boot分区",
+          "condition": "if_first_failed"
+        },
+        {
+          "type": "fastboot_reboot",
+          "description": "重启设备"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "name": "清理临时文件",
+      "progress": 98,
+      "message": "正在清理设备临时文件...",
+      "commands": [
+        {
+          "type": "adb_shell",
+          "command": "rm -rf /data/local/tmp/SukiSUInstaller",
+          "description": "清理工作目录"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "name": "完成",
+      "progress": 100,
+      "message": "Root完成！",
+      "commands": []
+    }
+  ],
+  "payload_dumper": {
+    "tool_path": "Tools/payload_dumper/payload_dumper.exe",
+    "extract_priority": ["init_boot.img", "boot.img"],
+    "temp_extract_path": "{temp}/extracted"
+  },
+  "error_messages": {
+    "device_not_supported": "抱歉，您的设备不支持此工具（内核版本: {kernel}, API Level: {api}）",
+    "download_error": "下载失败: {error}",
+    "adb_error": "ADB命令执行失败: {error}",
+    "no_boot_image": "刷机包中未找到boot.img或init_boot.img镜像",
+    "patch_failed": "Boot镜像修补失败，请检查设备日志"
+  }
+}
