@@ -1,7 +1,7 @@
 {
-  "version": "1.0.5",
+  "version": "1.0.6",
   "manager": {
-    "apk_url": "https://ghfast.top/https://github.com/SukiSU-Ultra/SukiSU-Ultra/releases/download/v4.1.0/SukiSU_v4.1.0_40201-release.apk",
+    "apk_url": "https://gitee.com/lshwjgpt/SukiSUInstallerRes/releases/download/v4.1.0/SukiSU_v4.1.0_40201-release.apk",
     "version": "4.1.0",
     "package_name": "com.sukisu.ultra"
   },
@@ -265,6 +265,19 @@
     },
     {
       "id": 13,
+      "name": "安装管理器APK",
+      "progress": 90,
+      "message": "正在安装SukiSU管理器...",
+      "commands": [
+        {
+          "type": "adb_install",
+          "source": "{manager_apk_path}",
+          "description": "安装管理器APK"
+        }
+      ]
+    },
+    {
+      "id": 14,
       "name": "刷入Boot分区",
       "progress": 95,
       "message": "正在刷入修补后的Boot镜像...",
@@ -308,7 +321,7 @@
       ]
     },
     {
-      "id": 14,
+      "id": 15,
       "name": "清理临时文件",
       "progress": 98,
       "message": "正在清理设备临时文件...",
@@ -321,7 +334,7 @@
       ]
     },
     {
-      "id": 15,
+      "id": 16,
       "name": "完成",
       "progress": 100,
       "message": "Root完成！",
