@@ -1,8 +1,8 @@
 {
-  "latestVersion": "1.0.1",
+  "latestVersion": "1.0.0",
   "changelog": [
-    "更新测试"
+    "NoN"
   ],
   "downloadUrl": "https://github.com/lshwjgpt25/SukiSUInstaller/releases/latest",
-  "isForced": true
+  "isForced": false
 }
